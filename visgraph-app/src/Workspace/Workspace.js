@@ -85,6 +85,7 @@ const Workspace = () => {
     const [clusteringDialogOpen, setClusteringDialogOpen] = useState(false);
     const [distanceMatrixDialogOpen, setDistanceMatrixDialogOpen] = useState(false);
     const [distanceMatrix, setDistanceMatrix] = useState(null);
+    const [nodeColors, setNodeColors] = useState({});
 
     // Эффект для отслеживания изменения размера окна
     useEffect(() => {
@@ -122,6 +123,55 @@ const Workspace = () => {
     useEffect(() => {
         calculateGraphCharacteristics();
     }, [nodes, edges]);
+
+    const handleColorGraph = () => {
+        // Deep copy nodes to avoid direct state modification
+        const nodesCopy = [...nodes];
+        let colorIndex = 1;
+        const coloredNodes = new Set();
+
+        while (coloredNodes.size < nodes.length) {
+            // Step 1: Find the uncolored node with the highest degree
+            let maxDegreeNode = null;
+            let maxDegree = -1;
+
+            for (let node of nodesCopy) {
+                if (coloredNodes.has(node.id)) continue;
+
+                const degree = edges.filter(edge => edge.from === node.id || edge.to === node.id).length;
+                if (degree > maxDegree || (degree === maxDegree && node.id < maxDegreeNode.id)) {
+                    maxDegreeNode = node;
+                    maxDegree = degree;
+                }
+            }
+
+            if (!maxDegreeNode) break;  // Exit if no uncolored nodes remain
+
+            // Assign color to this node
+            maxDegreeNode.color = `color${colorIndex}`;
+            coloredNodes.add(maxDegreeNode.id);
+
+            // Step 3: Find all nodes that do not have direct edges with maxDegreeNode
+            for (let node of nodesCopy) {
+                if (coloredNodes.has(node.id)) continue;
+
+                const hasDirectEdge = edges.some(edge =>
+                    (edge.from === maxDegreeNode.id && edge.to === node.id) ||
+                    (edge.to === maxDegreeNode.id && edge.from === node.id)
+                );
+
+                if (!hasDirectEdge) {
+                    node.color = `color${colorIndex}`;
+                    coloredNodes.add(node.id);
+                }
+            }
+
+            // Move to the next color
+            colorIndex++;
+        }
+
+        setNodes(nodesCopy);
+    };
 
     /**
      * Расчёт характеристик графа, таких как степень, центральность и т. д.
@@ -239,6 +289,7 @@ const Workspace = () => {
                         onClusteringClick={() => setClusteringDialogOpen(true)}
                         onCalculateMatrix={handleOpenDistanceMatrixDialog}
                         onResetFilters={handleResetFilters}
+                        onColorGraph={handleColorGraph}
                     />
                     <NetworkChart
                         nodes={nodes}

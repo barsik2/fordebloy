@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 // import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormControl, Checkbox, ListItemText } from '@mui/material';
 import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormControl, Checkbox, ListItemText, Grid } from '@mui/material';
 
-const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPathClick, onClusteringClick, onCalculateMatrix, onResetFilters }) => {
+const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPathClick, onClusteringClick,
+    onCalculateMatrix, onResetFilters, onColorGraph }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchType, setSearchType] = useState([]);
     const [searchWeight, setSearchWeight] = useState('');
@@ -129,6 +130,9 @@ const NodeSearch = ({ nodes, edges, onFilterNodes, onFilterEdges, onShortestPath
             </Button>
             <Button variant="contained" color="primary" onClick={onCalculateMatrix}>
                 Матрица расстояний
+            </Button>
+            <Button variant="contained" color="primary" onClick={onColorGraph}>
+                Раскраска
             </Button>
             <Button variant="contained" onClick={handleResetFilters}>
                 Очистить фильтры

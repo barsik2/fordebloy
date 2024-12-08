@@ -33,26 +33,49 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
 
     useEffect(() => {
         const data = {
-            nodes: new DataSet(nodes),
-            edges: new DataSet(edges.map((edge, index) => {
-                const weightsArray = edge.weights.split(',').map(Number);
-                const isMultiple = weightsArray.length > 1;
-                const edgeLabel = isMultiple ? `ge${index + 1}/v${index + 1}` : `ge${index + 1}/tp${edge.type.replace(/\D/g, '')}`;
-                const edgeWidth = isMultiple ? 3 : 1;
-                const edgeColor = isMultiple ? 'blue' : 'black';
+            // nodes: new DataSet(nodes),
+            // edges: new DataSet(edges.map((edge, index) => {
+            //     const weightsArray = edge.weights.split(',').map(Number);
+            //     const isMultiple = weightsArray.length > 1;
+            //     const edgeLabel = isMultiple ? `ge${index + 1}/v${index + 1}` : `ge${index + 1}/tp${edge.type.replace(/\D/g, '')}`;
+            //     const edgeWidth = isMultiple ? 3 : 1;
+            //     const edgeColor = isMultiple ? 'blue' : 'black';
 
-                return {
-                    ...edge,
-                    label: edgeLabel,
-                    color: edgeColor,
-                    font: {
-                        align: 'horizontal',
-                        strokeWidth: 0,
-                        background: '#ffffffaa'
-                    },
-                    width: edgeWidth
-                };
-            }))
+            //     return {
+            //         ...edge,
+            //         label: edgeLabel,
+            //         color: edgeColor,
+            //         font: {
+            //             align: 'horizontal',
+            //             strokeWidth: 0,
+            //             background: '#ffffffaa'
+            //         },
+            //         width: edgeWidth
+            //     };
+            // }))
+            nodes: new DataSet(
+                nodes.map(node => ({
+                    ...node,
+                    color: node.color === 'color1' ? 'green' :
+                           node.color === 'color2' ? 'red' :
+                           node.color === 'color3' ? 'blue' :
+                           node.color === 'color4' ? 'grey' :
+                           node.color === 'color5' ? 'yellow' :
+                           node.color === 'color6' ? 'purple' :
+                           node.color === 'color7' ? 'orange' :
+                           node.color === 'color8' ? 'cyan' :
+                           node.color === 'color9' ? 'magenta' :
+                           node.color === 'color10' ? 'brown' :
+                           node.color === 'color11' ? 'pink' :
+                           node.color === 'color12' ? 'lime' :
+                           node.color === 'color13' ? 'teal' :
+                           node.color === 'color14' ? 'navy' :
+                           node.color === 'color15' ? 'gold' :
+                           node.color === 'color16' ? 'violet' :
+                           '#97C2FC'
+                }))
+            ),
+            edges: new DataSet(edges),
         };
 
         const options = {
@@ -61,13 +84,13 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                 borderWidth: 2,
                 font: {
                     color: 'black',
-                    align: 'center'
+                    align: 'center',
                 },
             },
             edges: {
                 font: {
                     align: 'top',
-                    background: '#ffffffaa'
+                    background: '#ffffffaa',
                 },
                 color: 'black',
                 arrows: {
@@ -78,9 +101,36 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
             interaction: {
                 hover: true,
                 multiselect: true,
-                selectable: true
+                selectable: true,
             },
         };
+
+        // const options = {
+        //     nodes: {
+        //         shape: 'ellipse',
+        //         borderWidth: 2,
+        //         font: {
+        //             color: 'black',
+        //             align: 'center'
+        //         },
+        //     },
+        //     edges: {
+        //         font: {
+        //             align: 'top',
+        //             background: '#ffffffaa'
+        //         },
+        //         color: 'black',
+        //         arrows: {
+        //             to: { enabled: true, scaleFactor: 1 },
+        //             from: { enabled: false, scaleFactor: 1 },
+        //         },
+        //     },
+        //     interaction: {
+        //         hover: true,
+        //         multiselect: true,
+        //         selectable: true
+        //     },
+        // };
 
         const network = new Network(networkRef.current, data, options);
 
@@ -100,13 +150,10 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
             const nodeId = params.node;
             // Получаем позицию узла относительно канваса
             const nodePosition = network.getPosition(nodeId);
-            
             // Получаем смещение (если карта перемещена)
             const viewPosition = network.getViewPosition();
-            
             // Масштаб карты
             const scale = network.getScale();
-            
             // Применяем смещение и масштаб для корректного отображения
             const adjustedPosition = {
                 x: nodePosition.x + viewPosition.x,
@@ -326,14 +373,6 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
         }
     };
 
-    const handleFindShortestPath = () => {
-        if (selectedNodes.length === 2) {
-            handleCalculateShortestPath(selectedNodes[0], selectedNodes[1]);
-        } else {
-            console.error("Please select exactly two nodes to find the shortest path");
-        }
-    };
-
     return (
         <div style={{ position: "relative" }}>
             <div ref={networkRef} style={{ width: '100%', height: '75vh' }} />
@@ -484,7 +523,7 @@ const NetworkChart = ({ nodes = [], edges = [], onNodeClick, onDeleteNode, onUpd
                     }}
                 />
 
-                    
+
                 </Tooltip>
             )}
         </div>
